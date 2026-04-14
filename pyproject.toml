@@ -20,6 +20,7 @@ dependencies = [
 # WHY: Optional dependency groups keep the core install clean and focused.
 dev = [
     # REQ.DEV.DEPS: External packages used for linting, testing, type checking, etc.
+    "matplotlib",
     "packaging",
     "pre-commit",
     "ruff",
