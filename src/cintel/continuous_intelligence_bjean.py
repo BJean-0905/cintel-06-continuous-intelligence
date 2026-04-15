@@ -1,7 +1,7 @@
 """
 continuous_intelligence_case.py - Project script (example).
 
-Author: Denise Case
+Author: Denise Case, Britany Kline
 Date: 2026-03
 
 System Metrics Data
@@ -33,12 +33,12 @@ Questions to Consider
 
 Paths (relative to repo root)
 
-    INPUT FILE: data/system_metrics_case.csv
-    OUTPUT FILE: artifacts/system_assessment_case.csv
+    INPUT FILE: data/system_metrics_bjean.csv
+    OUTPUT FILE: artifacts/system_assessment_bjean.csv
 
 Terminal command to run this file from the root project folder
 
-    uv run python -m cintel.continuous_intelligence_case
+    uv run python -m cintel.continuous_intelligence_bjean
 
 OBS:
   Don't edit this file - it should remain a working example.
@@ -65,15 +65,15 @@ ROOT_DIR: Final[Path] = Path.cwd()
 DATA_DIR: Final[Path] = ROOT_DIR / "data"
 ARTIFACTS_DIR: Final[Path] = ROOT_DIR / "artifacts"
 
-DATA_FILE: Final[Path] = DATA_DIR / "system_metrics_case.csv"
-OUTPUT_FILE: Final[Path] = ARTIFACTS_DIR / "system_assessment_case.csv"
+DATA_FILE: Final[Path] = DATA_DIR / "system_metrics_bjean.csv"
+OUTPUT_FILE: Final[Path] = ARTIFACTS_DIR / "system_assessment_bjean.csv"
 
 # === DEFINE THRESHOLDS ===
 
 # Analysts need to know their data and
 # choose thresholds that make sense for their specific use case.
 
-MAX_ERROR_RATE: Final[float] = 0.05
+MAX_ERROR_RATE: Final[float] = 5.0  # 5% error rate threshold
 MAX_AVG_LATENCY: Final[float] = 40.0
 
 # === DEFINE THE MAIN FUNCTION ===
@@ -116,8 +116,14 @@ def main() -> None:
 
     df = df.with_columns(
         [
-            (pl.col("errors") / pl.col("requests")).alias("error_rate"),
-            (pl.col("total_latency_ms") / pl.col("requests")).alias("avg_latency_ms"),
+            (pl.col("errors") / pl.col("requests") * 100)
+            .round(0)
+            .cast(pl.Int64)
+            .alias("error_rate"),
+            (pl.col("total_latency_ms") / pl.col("requests"))
+            .round(0)
+            .cast(pl.Int64)
+            .alias("avg_latency_ms"),
         ]
     )
 
@@ -159,10 +165,14 @@ def main() -> None:
 
     summary_df = df.select(
         [
-            pl.col("requests").mean().alias("avg_requests"),
-            pl.col("errors").mean().alias("avg_errors"),
-            pl.col("error_rate").mean().alias("avg_error_rate"),
-            pl.col("avg_latency_ms").mean().alias("avg_latency_ms"),
+            pl.col("requests").mean().round(0).cast(pl.Int64).alias("avg_requests"),
+            pl.col("errors").mean().round(0).cast(pl.Int64).alias("avg_errors"),
+            pl.col("error_rate").mean().round(0).cast(pl.Int64).alias("avg_error_rate"),
+            pl.col("avg_latency_ms")
+            .mean()
+            .round(0)
+            .cast(pl.Int64)
+            .alias("avg_latency_ms"),
         ]
     )
 

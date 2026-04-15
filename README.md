@@ -50,7 +50,7 @@ in earlier modules into a simple continuous intelligence pipeline:
 
 The example pipeline reads system metrics from:
 
-`data/system_metrics_case.csv`
+`data/system_metrics_bjean.csv`
 
 Each row represents one observation of system activity.
 
@@ -139,7 +139,7 @@ uvx pre-commit run --all-files
 git add -A
 uvx pre-commit run --all-files
 
-uv run python -m cintel.continuous_intelligence_case
+uv run python -m cintel.continuous_intelligence_bjean
 
 uv run ruff format .
 uv run ruff check . --fix
